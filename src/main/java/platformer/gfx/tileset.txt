@@ -4,8 +4,8 @@ tileSize=10
 1,Solid,1,0
 2,Spikes_downwards,2,0
 3,Spikes_upwards,3,0
-4,Spikes_leftwards,4,0
-5,Spikes_rightwards,5,0
+4,Spikes_leftwards,5,0
+5,Spikes_rightwards,4,0
 6,Dirt,0,1
 7,Grass,1,1
 !, 8 is reserved for enemies which are on a separate palette
