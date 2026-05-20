@@ -20,7 +20,7 @@ public class Spikes extends Tile{
 		offsetX = (int)(level.getLevelData().getTileSize()*0.1);
 		offsetY = (int)(level.getLevelData().getTileSize()/2);
 		Tileset tileset = GameResources.tileset;
-		
+
 		switch (orientation) {
 		case HORIZONTAL_UPWARDS:
 			hitbox = new RectHitbox(x*size , y*size, offsetX, offsetY, size - offsetX, size);
