@@ -199,6 +199,12 @@ public class Level {
 	private void water(int col, int row, Map map, int fullness) {
 		Water w = new Water(col,row,tileSize, tileset.getImage( "Full_water"), this, fullness);
 		map.addTile(col,row,w);
+
+		//check the block right below us, if that block is available (not solid, in bounds)
+		//if we can go down, call water again with row+1 as coordiante
+
+		//if we can't go down, try going left and right
+
 		if(col+1 < map.getTiles().length);
 	}
 
