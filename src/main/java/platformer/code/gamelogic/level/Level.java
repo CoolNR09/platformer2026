@@ -196,18 +196,63 @@ public class Level {
 	//#############################################################################################################
 	//Your code goes here! 
 	//Please make sure you read the rubric/directions carefully and implement the solution recursively!
-	private void water(int col, int row, Map map, int fullness) {
-		Water w = new Water(col,row,tileSize, tileset.getImage( "Full_water"), this, fullness);
-		map.addTile(col,row,w);
+private void water(int col, int row, Map map, int fullness) {
+		// 1. Boundary and Collision checks
+		if (col < 0 || col >= map.getTiles().length || row < 0 || row >= map.getTiles()[col].length) return;
+		if (map.getTiles()[col][row].isSolid()) return;
+		
+		// 2. Optimization - dont reprocess
+		if (map.getTiles()[col][row] instanceof Water) {
+			Water current = (Water) map.getTiles()[col][row];
+			if (current.getFullness() >= fullness) return;
+		}
 
-		//check the block right below us, if that block is available (not solid, in bounds)
-		//if we can go down, call water again with row+1 as coordiante
+		// 3. Determine image based on fullness
+		String fileName = "Full_water";
+		switch (fullness) {
+			case 0: 
+				fileName = "Falling_water";
+				break;
+			case 1:
+				fileName = "Quarter_water";
+				break;
+			case 2: 
+				fileName = "Half_water";
+				break;
+			case 3: 
+				fileName = "Full_water";
+				break;
+		}
+		
+		// 4. update the map
+		Water water = new Water(col, row, tileSize, tileset.getImage(fileName), this, fullness);
+		map.addTile(col, row, water);
 
-		//if we can't go down, try going left and right
+		// 5. Recursive part
+		// Flow down first
+		if (row + 1 < map.getTiles()[col].length && !map.getTiles()[col][row+1].isSolid()) {
+			water(col, row + 1, map, 0);
+		} else {
+			// If we can't flow down, and we were falling, then fill with full water block
+			if (fullness == 0) {
+				water(col, row, map, 1);
+				return;
+			}
 
-		if(col+1 < map.getTiles().length);
+			// if not, spread sideways
+			int spreadFullness = fullness - 1;
+			//if (spreadFullness <= 0) return;
+			
+			// spread right
+			if (col + 1 < map.getTiles().length && !map.getTiles()[col+1][row].isSolid()) {
+				water(col + 1, row, map, spreadFullness);
+			}
+			// spread left
+			if (col - 1 >= 0 && !map.getTiles()[col-1][row].isSolid()) {
+				water(col - 1, row, map, spreadFullness);
+			}
+		}
 	}
-
 
 
 	public void draw(Graphics g) {
