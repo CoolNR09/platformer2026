@@ -196,18 +196,18 @@ public class Level {
 	//#############################################################################################################
 	//Your code goes here! 
 	//Please make sure you read the rubric/directions carefully and implement the solution recursively!
-private void water(int col, int row, Map map, int fullness) {
-		// 1. Boundary and Collision checks
+	private void water(int col, int row, Map map, int fullness) {
+		// 1. checks
 		if (col < 0 || col >= map.getTiles().length || row < 0 || row >= map.getTiles()[col].length) return;
 		if (map.getTiles()[col][row].isSolid()) return;
 		
-		// 2. Optimization - dont reprocess
+		// 2. check for other waters so no overlapping
 		if (map.getTiles()[col][row] instanceof Water) {
 			Water current = (Water) map.getTiles()[col][row];
 			if (current.getFullness() >= fullness) return;
 		}
 
-		// 3. Determine image based on fullness
+		// 3. find tile image based on fullness
 		String fileName = "Full_water";
 		switch (fullness) {
 			case 0: 
@@ -224,31 +224,38 @@ private void water(int col, int row, Map map, int fullness) {
 				break;
 		}
 		
-		// 4. update the map
+		// 4. set tile at appointed xy and update map
 		Water water = new Water(col, row, tileSize, tileset.getImage(fileName), this, fullness);
 		map.addTile(col, row, water);
 
-		// 5. Recursive part
-		// Flow down first
-		if (row + 1 < map.getTiles()[col].length && !map.getTiles()[col][row+1].isSolid()) {
+		// 5. 
+		
+		// check if we are at the bottem edge of the map.
+		if (row + 1 >= map.getTiles()[col].length) {
+			return; 
+		}
+
+		// if open space below then fall
+		if (!map.getTiles()[col][row + 1].isSolid()) {
 			water(col, row + 1, map, 0);
-		} else {
-			// If we can't flow down, and we were falling, then fill with full water block
+		} 
+		// otherwise go through the sides 
+		else {
+			// If we were falling water (0) and hit the floor, convert this tile to a full water block (3)
 			if (fullness == 0) {
-				water(col, row, map, 1);
+				water(col, row, map, 3);
 				return;
 			}
 
-			// if not, spread sideways
-			int spreadFullness = fullness - 1;
-			//if (spreadFullness <= 0) return;
+			// if 1 keeps flowing
+			int spreadFullness = (fullness > 1) ? fullness - 1 : 1;
 			
-			// spread right
-			if (col + 1 < map.getTiles().length && !map.getTiles()[col+1][row].isSolid()) {
+			// goes right
+			if (col + 1 < map.getTiles().length && !map.getTiles()[col + 1][row].isSolid()) {
 				water(col + 1, row, map, spreadFullness);
 			}
-			// spread left
-			if (col - 1 >= 0 && !map.getTiles()[col-1][row].isSolid()) {
+			// goes left
+			if (col - 1 >= 0 && !map.getTiles()[col - 1][row].isSolid()) {
 				water(col - 1, row, map, spreadFullness);
 			}
 		}
